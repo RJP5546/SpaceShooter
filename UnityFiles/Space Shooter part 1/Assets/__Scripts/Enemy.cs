@@ -37,14 +37,11 @@ public class Enemy : MonoBehaviour
         Move();
 
         //Check wether this Enemy has gone off the bottom of the screen
-        if (!bndCheck.isOnScreen)
+        if (bndCheck.LocIs(BoundsCheck.eScreenLocs.offDown))
         {
-            if (pos.y < bndCheck.camHeight - bndCheck.radius)
-            {
-                //We are off the bottom, so destroy this GameObject
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
+
     }
 
     public virtual void Move()
@@ -53,4 +50,18 @@ public class Enemy : MonoBehaviour
         tempPos.y -= speed * Time.deltaTime;
         pos = tempPos;
     } 
+
+    void OnCollisionEnter(Collision coll)
+    {
+        GameObject otherGo = coll.gameObject;
+        if (otherGo.GetComponent<ProjectileHero>() != null)
+        {
+            Destroy(otherGo);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Debug.Log("Enemy hit by non-ProjectileHero: " + otherGo.name);
+        }
+    }
 }
